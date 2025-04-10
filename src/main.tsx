@@ -4,7 +4,7 @@ import App from './App';
 import './styles/globals.css';
 
 const container = document.getElementById('root');
-// Make sure container is not null before creating root
+// Ensure the container exists before trying to create a root
 if (container) {
   const root = createRoot(container);
   root.render(

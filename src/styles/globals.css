@@ -1,71 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --primary-color: #4a90e2;
-  --secondary-color: #50e3c2;
-  --background-color: #f5f5f5;
-  --text-color: #333;
-  --border-color: #e0e0e0;
+  --background: #090909;
+  --card-bg: #121212;
+  --surface-bg: #1A1A1A;
+  --border-color: #2A2A2A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #AAAAAA;
+  --primary: #3B82F6;
+  --danger: #FF5A5A;
+  --warning: #FFB800;
+  --success: #00C853;
+  --info: #64B5F6;
 }
 
 body {
-  margin: 0;
+  background-color: var(--background);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  color: var(--primary-color);
+  min-height: 100vh;
 }
 
-a {
-  color: var(--primary-color);
-  text-decoration: none;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-a:hover {
-  text-decoration: underline;
+::-webkit-scrollbar-track {
+  background: var(--surface-bg);
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
 }
 
-.button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
-.button:hover {
-  background-color: var(--secondary-color);
+/* Glassmorphism */
+.glass {
+  background: rgba(26, 26, 26, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(90deg, #3B82F6, #00C853);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+/* Chart and graph styles */
+.chart-tooltip {
+  background-color: rgba(26, 26, 26, 0.85);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  }
+}
+
+/* Custom utils */
 .card {
-  background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  @apply bg-dark-800 border border-dark-500 rounded-xl shadow-card transition-all duration-300;
 }
 
-.loader {
-  border: 4px solid var(--border-color);
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+.card:hover {
+  @apply shadow-glow border-primary-300;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.badge {
+  @apply px-2 py-0.5 rounded-md text-xs font-medium;
+}
+
+.badge-danger {
+  @apply bg-danger bg-opacity-20 text-danger;
+}
+
+.badge-warning {
+  @apply bg-warning bg-opacity-20 text-warning;
+}
+
+.badge-success {
+  @apply bg-success bg-opacity-20 text-success;
+}
+
+.badge-info {
+  @apply bg-info bg-opacity-20 text-info;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-opacity-80 text-white;
 }

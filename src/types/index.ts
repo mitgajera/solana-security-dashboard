@@ -1,12 +1,13 @@
-// This file exports TypeScript types and interfaces used throughout the application.
-
+// src/types/index.ts
 export interface Exploit {
-  id: string;
+  id: string | number;
   protocol: string;
   date: string;
   type: string;
   fundsLost: number;
   responseTime: number;
+  description?: string;
+  transactionHash?: string;
 }
 
 export interface LiveAlert {
@@ -16,11 +17,7 @@ export interface LiveAlert {
   type: string;
   severity: 'Low' | 'Medium' | 'High' | 'Critical';
   transactionHash: string;
-}
-
-export interface ChartData {
-  name: string;
-  value: number;
+  details?: Record<string, any>;
 }
 
 export interface HackReport {
@@ -32,15 +29,4 @@ export interface HackReport {
   sourceLinks: string[];
   reporterName?: string;
   reporterEmail?: string;
-}
-
-export interface Resource {
-  title: string;
-  link: string;
-  description: string;
-}
-
-export interface Contributor {
-  username: string;
-  contributions: number;
 }

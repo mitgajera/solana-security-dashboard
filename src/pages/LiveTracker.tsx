@@ -11,7 +11,7 @@ const LiveTracker: React.FC = () => {
     }
 
     if (error) {
-        return <div>Error loading live alerts: {error.message}</div>;
+        return <div>Error loading live alerts: {error}</div>;
     }
 
     return (
@@ -25,7 +25,7 @@ const LiveTracker: React.FC = () => {
                 <ul className="space-y-2">
                     {alerts.map((alert) => (
                         <li key={alert.id} className="border p-2 rounded">
-                            <strong>{alert.protocol}</strong> - {alert.description} <br />
+                            <strong>{alert.protocol}</strong> - {alert.type} <br />
                             <span className="text-sm text-gray-500">{new Date(alert.timestamp).toLocaleString()}</span>
                         </li>
                     ))}

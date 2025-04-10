@@ -1,31 +1,32 @@
-import { useEffect, useState } from 'react';
-import { fetchLiveAlerts } from '../lib/api';
+import { useState, useEffect } from 'react';
+import { apiService } from '../services/apiService';
+import { LiveAlert } from '../types';
 
-const useLiveAlerts = () => {
-    const [alerts, setAlerts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+export const useLiveAlerts = () => {
+  const [alerts, setAlerts] = useState<LiveAlert[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchAlerts = async () => {
-            try {
-                setLoading(true);
-                const data = await fetchLiveAlerts();
-                setAlerts(data);
-            } catch (err) {
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.fetchLiveAlerts();
+        setAlerts(data);
+      } catch (err) {
+        setError('Failed to fetch live alerts');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchAlerts();
-        const intervalId = setInterval(fetchAlerts, 60000); // Fetch new alerts every minute
+    fetchAlerts();
+    
+    // Polling for new alerts every 30 seconds
+    const interval = setInterval(fetchAlerts, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
-        return () => clearInterval(intervalId); // Cleanup on unmount
-    }, []);
-
-    return { alerts, loading, error };
+  return { alerts, loading, error };
 };
-
-export default useLiveAlerts;

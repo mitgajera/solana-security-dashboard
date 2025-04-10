@@ -1,0 +1,14 @@
+node_modules
+.env
+dist
+package-lock.json
+yarn.lock
+coverage
+*.log
+*.tsbuildinfo
+*.tgz
+*.zip
+*.tar.gz
+*.tgz
+*.tar
+*.tgz

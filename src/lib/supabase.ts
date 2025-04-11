@@ -1,17 +1,44 @@
 import { createClient } from '@supabase/supabase-js';
 import { Exploit, LiveAlert } from '../types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseKey && process.env.NODE_ENV === 'production') {
-  console.error('No Supabase key found in environment variables');
+// Move these to a function to prevent execution at build time
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  
+  if (!supabaseKey && typeof window !== 'undefined') {
+    console.warn('No Supabase key found in environment variables');
+  }
+  
+  if (!supabaseUrl || !supabaseKey) {
+    if (typeof window !== 'undefined') {
+      console.warn('Supabase credentials missing - using mock data');
+    }
+    // Return a minimal mock client when credentials are missing
+    return null;
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
 }
 
-export const supabase = createClient(
-  supabaseUrl, 
-  supabaseKey || ''
-);
+// Lazy initialize only when actually used (not during SSG build)
+let _supabase = null;
+export const supabase = {
+  // Proxy the common methods
+  from: (...args) => {
+    if (!_supabase) _supabase = getSupabaseClient();
+    return _supabase ? _supabase.from(...args) : { select: () => ({ data: null, error: new Error('Not connected') }) };
+  },
+  // Add other methods you're using
+  channel: (...args) => {
+    if (!_supabase) _supabase = getSupabaseClient();
+    return _supabase ? _supabase.channel(...args) : { on: () => ({ subscribe: () => {} }) };
+  },
+  removeChannel: (...args) => {
+    if (!_supabase) _supabase = getSupabaseClient();
+    return _supabase ? _supabase.removeChannel(...args) : {};
+  }
+};
 
 // Keep the mockExploits as fallback data during development
 export const mockExploits: Exploit[] = [

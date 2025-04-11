@@ -22,13 +22,11 @@ export function AdminPanel() {
     // Check if we have a valid Supabase connection
     const checkConnection = async () => {
       try {
-        const { data, error } = await supabase.from('connection_test').select('*').limit(1);
-        if (!error) {
-          setDataSource("live");
-          setConnectionStatus("connected");
-        } else {
-          throw new Error("Failed to connect to database");
-        }
+        // Use the fetchWithFallback helper instead of direct supabase calls
+        // This safely handles the case where supabase isn't initialized
+        const testData = await fetchWithFallback('connection_test', []);
+        setDataSource(testData ? "live" : "mock");
+        setConnectionStatus(testData ? "connected" : "disconnected");
       } catch (error) {
         console.warn("Unable to connect to Supabase, using mock data", error);
         setDataSource("mock");

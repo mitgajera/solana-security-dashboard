@@ -1,5 +1,13 @@
 import { supabase } from '../lib/supabase';
 
+type PostgresChangePayload = {
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  new: Record<string, unknown>;
+  old: Record<string, unknown>;
+  schema: string;
+  table: string;
+};
+
 type RealtimeCallback = (payload: any) => void;
 
 export const realtimeService = {
@@ -21,15 +29,15 @@ export const realtimeService = {
     
     // Return unsubscribe function
     return () => {
-      supabase.removeChannel(subscription);
-    };
-  },
-  
-  subscribeExploits(callback: RealtimeCallback): () => void {
-    // Create and subscribe to the channel
-    const subscription = supabase
-      .channel('exploits-changes')
       .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'exploits' 
+        }, 
+        (payload: PostgresChangePayload) => {
+          callback(payload);
+        }
         { 
           event: '*', 
           schema: 'public', 

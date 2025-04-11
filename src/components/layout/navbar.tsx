@@ -10,9 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { usePathname } from "next/navigation" // Add this import
 
 export function Navbar() {
   const { setTheme } = useTheme()
+  const pathname = usePathname() // Get current path
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,31 +29,41 @@ export function Navbar() {
           <nav className="hidden gap-6 md:flex">
             <Link
               href="/"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
             >
               Dashboard
             </Link>
             <Link
               href="/exploits"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/exploits' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
             >
               Exploits
             </Link>
             <Link
               href="/analytics"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/analytics' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
             >
               Analytics
             </Link>
             <Link
               href="/submit"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/submit' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
             >
               Submit Hack
             </Link>
             <Link
               href="/resources"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/resources' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
             >
               Resources
             </Link>

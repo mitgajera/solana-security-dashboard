@@ -1,32 +1,20 @@
-import { Connection, PublicKey, ConfirmedSignatureInfo, TransactionResponse, VersionedTransactionResponse, ParsedTransactionWithMeta } from '@solana/web3.js';
-import { createClient } from '@supabase/supabase-js';
-import axios from 'axios';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { supabase } from '@/lib/supabase';
 import { LiveAlert, Exploit, ProgramAccount } from '../types';
 
-// Initialize Solana connection with robust configuration
-const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '';
-const rpcUrl = HELIUS_API_KEY 
-  ? `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`
-  : 'https://api.mainnet-beta.solana.com';
+// Safely initialize Solana connection
+const connection = new Connection(
+  process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com',
+  {
+    commitment: 'confirmed',
+    confirmTransactionInitialTimeout: 15000
+  }
+);
 
-// Configure connection with rate limiting avoidance
-const connection = new Connection(rpcUrl, {
-  commitment: 'confirmed',
-  confirmTransactionInitialTimeout: 15000,
-  disableRetryOnRateLimit: true,
-  wsEndpoint: undefined // Disable WebSockets
-});
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// In-memory cache
+// Cache for performance
 const cache = {
-  lastFetchTimestamp: 0,
   alerts: [] as LiveAlert[],
-  exploits: [] as Exploit[]
+  lastFetchTimestamp: 0
 };
 
 // Protocols to monitor

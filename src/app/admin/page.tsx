@@ -1,3 +1,4 @@
+// Set dynamic = 'force-dynamic' to ensure this page isn't statically generated
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 

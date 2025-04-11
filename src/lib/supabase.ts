@@ -2,54 +2,66 @@ import { createClient } from '@supabase/supabase-js';
 import { Exploit, LiveAlert } from '../types';
 
 // Move Supabase client creation to a function to prevent execution at build time
-function getSupabaseClient() {
+let _supabase = null;
+
+export function getSupabaseClient() {
+  if (_supabase) return _supabase;
+
+  // Only run in browser environment, not during static build
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
   
-  if (!supabaseKey && typeof window !== 'undefined') {
-    console.warn('No Supabase key found in environment variables');
-  }
-  
   if (!supabaseUrl || !supabaseKey) {
-    if (typeof window !== 'undefined') {
-      console.warn('Supabase credentials missing - using mock data');
-    }
+    console.warn('No Supabase key found in environment variables');
     return null;
   }
   
-  return createClient(supabaseUrl, supabaseKey);
+  _supabase = createClient(supabaseUrl, supabaseKey);
+  return _supabase;
 }
 
-// Lazy initialize only when actually used (not during build time)
-let _supabase = null;
-
 export const supabase = {
-  from: (...args) => {
-    if (!_supabase && typeof window !== 'undefined') _supabase = getSupabaseClient();
-    return _supabase ? _supabase.from(...args) : { 
-      select: () => ({ data: null, error: new Error('Not connected') }),
-      insert: () => ({ data: null, error: new Error('Not connected') }),
-      update: () => ({ data: null, error: new Error('Not connected') }),
-      delete: () => ({ data: null, error: new Error('Not connected') }),
-      eq: () => ({ data: null, error: new Error('Not connected') })
-    };
+  from: (table) => {
+    const client = getSupabaseClient();
+    if (!client) {
+      return {
+        select: () => Promise.resolve({ data: null, error: new Error('No Supabase client') }),
+        insert: () => Promise.resolve({ data: null, error: new Error('No Supabase client') }),
+        update: () => Promise.resolve({ data: null, error: new Error('No Supabase client') }),
+        delete: () => Promise.resolve({ data: null, error: new Error('No Supabase client') }),
+        eq: () => ({ 
+          select: () => Promise.resolve({ data: null, error: new Error('No Supabase client') })
+        }),
+        order: () => ({ 
+          limit: () => Promise.resolve({ data: null, error: new Error('No Supabase client') }) 
+        })
+      };
+    }
+    return client.from(table);
   },
   
-  // Add other methods you're using
-  channel: (...args) => {
-    if (!_supabase && typeof window !== 'undefined') _supabase = getSupabaseClient();
-    return _supabase ? _supabase.channel(...args) : { 
-      on: () => ({ subscribe: () => {} }) 
-    };
+  channel: (name) => {
+    const client = getSupabaseClient();
+    if (!client) {
+      return { 
+        on: () => ({ subscribe: () => ({}) }) 
+      };
+    }
+    return client.channel(name);
   },
   
-  removeChannel: (...args) => {
-    if (!_supabase && typeof window !== 'undefined') _supabase = getSupabaseClient();
-    return _supabase ? _supabase.removeChannel(...args) : {};
+  removeChannel: (subscription) => {
+    const client = getSupabaseClient();
+    if (!client) return;
+    return client.removeChannel(subscription);
   }
 };
 
-// Keep the mockExploits as fallback data during development
+// Mock exploit data for fallback
 export const mockExploits: Exploit[] = [
   {
     id: 1,
@@ -168,18 +180,18 @@ export const mockPendingExploits: PendingExploit[] = [
   }
 ];
 
-// Helper function to safely fetch data with fallback
-export async function fetchWithFallback<T>(table: string, fallbackData: T[]): Promise<T[]> {
+// Helper function to fetch with fallback to mock data
+export async function fetchWithFallback<T>(table: string, mockData: T[]): Promise<T[]> {
   try {
-    const { data, error } = await supabase
-      .from(table)
-      .select('*')
-      .order('created_at', { ascending: false });
-      
+    const client = getSupabaseClient();
+    if (!client) return mockData;
+    
+    const { data, error } = await client.from(table).select('*');
     if (error) throw error;
-    return data && data.length > 0 ? (data as T[]) : fallbackData;
+    
+    return data || mockData;
   } catch (error) {
-    console.warn(`Using fallback data for ${table}:`, error);
-    return fallbackData;
+    console.error(`Error fetching from ${table}:`, error);
+    return mockData;
   }
 }

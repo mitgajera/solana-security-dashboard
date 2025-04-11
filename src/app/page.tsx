@@ -8,14 +8,13 @@ import { ChartSection } from "@/components/dashboard/chart-section";
 export default function Home() {
   return (
     <DashboardLayout>
-      <div className="container py-6">
+      <div className="container py-4 sm:py-6">
         <DashboardHeader />
-        <div className="grid gap-6 md:grid-cols-4 lg:grid-cols-4 mt-6">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-4 sm:mt-6">
           <DashboardStats />
         </div>
         
-        {/* Fix: Add proper margin and adjust grid layout to prevent overlap */}
-        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 mt-8">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1 lg:grid-cols-2 mt-6 sm:mt-8">
           <div>
             <ExploitOverview />
           </div>
@@ -24,7 +23,7 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <ChartSection />
         </div>
       </div>

@@ -22,18 +22,13 @@ export function LiveTracker() {
     try {
       setLoading(true)
       const data = await solanaService.fetchRecentSuspiciousTransactions(5, forceRefresh)
-      
-      if (data && data.length > 0) {
-        console.log("Received blockchain data:", data.length, "transactions");
-        setAlerts(data)
-        setLastUpdated(new Date())
-        setError(null)
-      } else {
-        setError("No blockchain transactions found. Please try again.")
-      }
+      setAlerts(data)
+      setLastUpdated(new Date())
+      setRefreshCountdown(60)
+      setError(null)
     } catch (err) {
       console.error("Error fetching alerts:", err)
-      setError("Failed to fetch blockchain data. Please try again.")
+      setError("Failed to fetch security alerts. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -41,7 +36,6 @@ export function LiveTracker() {
   
   // Handle manual refresh
   const handleRefresh = useCallback(() => {
-    setRefreshCountdown(60)
     fetchAlerts(true)
   }, [fetchAlerts])
   
@@ -75,7 +69,7 @@ export function LiveTracker() {
     }
   }
   
-  // Get severity color based on severity level
+  // Determine severity color
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
       case 'critical': return "bg-red-500 hover:bg-red-600"
@@ -88,12 +82,12 @@ export function LiveTracker() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2">
         <div className="flex items-center">
           <AlertTriangle className="mr-2 h-5 w-5 text-blue-500" />
           <CardTitle>Live Security Alerts</CardTitle>
         </div>
-        <div className="flex items-center text-sm text-muted-foreground">
+        <div className="flex items-center text-sm text-muted-foreground w-full sm:w-auto justify-between sm:justify-start">
           <span>Refreshes in: {refreshCountdown}s</span>
           <Button
             variant="ghost"
@@ -114,15 +108,16 @@ export function LiveTracker() {
         {error ? (
           <div className="mt-4 p-4 border border-red-200 bg-red-50 text-red-700 rounded">
             {error}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleRefresh} 
-              className="ml-2 mt-2"
-              disabled={loading}
-            >
-              Retry
-            </Button>
+            <div className="mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh} 
+                disabled={loading}
+              >
+                Retry
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="mt-4 space-y-4">
@@ -131,7 +126,7 @@ export function LiveTracker() {
                 key={alert.id}
                 className="border-l-4 border-yellow-500 pl-4 py-2"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-start sm:items-center justify-between gap-2">
                   <div className="flex items-center">
                     <AlertTriangle className="mr-2 h-4 w-4 text-yellow-500" />
                     <span className="font-medium">{alert.protocol}</span>
@@ -143,7 +138,7 @@ export function LiveTracker() {
                 
                 <p className="mt-1">{alert.type}</p>
                 
-                <div className="mt-2 flex items-center justify-between">
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <a
                     href={`https://solscan.io/tx/${alert.transactionHash}`}
                     target="_blank"

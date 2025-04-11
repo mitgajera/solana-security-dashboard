@@ -58,17 +58,17 @@ const resourcesWithIds = securityResources.map((resource, index) => ({
 export default function ResourcesPage() {
   return (
     <DashboardLayout>
-      <div className="container py-6">
+      <div className="container py-4 sm:py-6">
         <div className="flex flex-col">
-          <h1 className="text-3xl font-bold tracking-tight">Security Resources</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Security Resources</h1>
           <p className="mt-2 text-muted-foreground">
             Resources and best practices to enhance security in Solana applications
           </p>
         </div>
 
-        <div className="grid gap-6 mt-8">
-          <h2 className="text-2xl font-semibold">Latest Resources</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 mt-6 sm:mt-8">
+          <h2 className="text-xl sm:text-2xl font-semibold">Latest Resources</h2>
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {resourcesWithIds.map((resource) => (
               <Card key={resource.id} className="flex flex-col h-full">
                 <CardHeader>
@@ -76,51 +76,22 @@ export default function ResourcesPage() {
                     {resource.icon}
                     <span className="text-sm font-medium">{resource.category}</span>
                   </div>
-                  <CardTitle>{resource.title}</CardTitle>
-                  <CardDescription>{resource.description}</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{resource.title}</CardTitle>
+                  <CardDescription className="line-clamp-3">{resource.description}</CardDescription>
                 </CardHeader>
-                <CardContent className="mt-auto">
-                  <Button asChild className="w-full">
-                    <Link href={resource.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-                      View Resource
-                      <ExternalLinkIcon className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                <CardContent className="flex-1 flex items-end">
+                  <a href={resource.link} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="flex items-center">
+                      View Resource <ExternalLinkIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
                 </CardContent>
               </Card>
             ))}
           </div>
-
-          <h2 className="text-2xl font-semibold mt-10">Security Contacts</h2>
-          <Card>
-            <CardHeader>
-              <CardTitle>Report a Vulnerability</CardTitle>
-              <CardDescription>
-                If you discover a potential security issue in the Solana network or any protocols in the ecosystem, please follow these steps to report it.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                For direct security vulnerabilities in the <strong>Solana network</strong>, please contact:
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Security team: <strong>security@solana.com</strong></li>
-                <li>Bug bounty program: <Link href="https://hackerone.com/solana" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">HackerOne</Link></li>
-              </ul>
-              <p>
-                For vulnerabilities in <strong>projects built on Solana</strong>:
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Contact the project directly through their official channels</li>
-                <li>If the project has a bug bounty program, submit through the appropriate channel</li>
-                <li>For critical issues where projects are unresponsive, report to <strong>ecosystem-security@solana.org</strong></li>
-              </ul>
-              <p className="text-muted-foreground">
-                Always follow responsible disclosure practices and give projects reasonable time to address vulnerabilities before public disclosure.
-              </p>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Additional responsive sections */}
       </div>
     </DashboardLayout>
   )

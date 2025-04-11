@@ -15,19 +15,18 @@ export function SubmitHackForm() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
-
-    // Simulate API call
+    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 2000))
       setIsSuccess(true)
-      // Reset form
-      e.currentTarget.reset()
+      // Reset form here if needed
     } catch (err) {
-      setError("An error occurred while submitting your report. Please try again.")
+      setError("Failed to submit the report. Please try again later.")
     } finally {
       setIsSubmitting(false)
     }
@@ -37,10 +36,9 @@ export function SubmitHackForm() {
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>Submit a Security Incident</CardTitle>
+          <CardTitle>Report Security Incident</CardTitle>
           <CardDescription>
-            Help the Solana community by reporting security incidents or vulnerabilities.
-            All submissions are reviewed by our security team.
+            Submit details about a potential exploit or vulnerability in a Solana protocol
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -63,7 +61,7 @@ export function SubmitHackForm() {
           )}
 
           <div className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="project-name">Project Name</Label>
                 <Input id="project-name" placeholder="e.g. SolLending Protocol" required />
@@ -87,7 +85,7 @@ export function SubmitHackForm() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="date">Date</Label>
                 <Input id="date" type="date" required />
@@ -122,7 +120,7 @@ export function SubmitHackForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col sm:flex-row gap-3 items-center sm:justify-end">
           <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? (
               <>

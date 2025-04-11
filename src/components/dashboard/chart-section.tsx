@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   Card,
   CardContent,
@@ -28,179 +28,221 @@ import {
   ZAxis,
 } from "recharts"
 
-// Mock data for charts
+// Chart color constants 
+const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#0088fe", "#00C49F"];
+
+// Sample data for the vulnerability types
 const vulnerabilityData = [
-  { name: "Flash Loans", value: 40 },
-  { name: "Reentrancy", value: 25 },
-  { name: "Access Control", value: 15 },
-  { name: "Oracle Manipulation", value: 12 },
-  { name: "Other", value: 8 },
-]
+  { name: "Smart Contract", value: 42 },
+  { name: "Oracle Manipulation", value: 18 },
+  { name: "Flash Loan", value: 15 },
+  { name: "Access Control", value: 11 },
+  { name: "Reentrancy", value: 9 },
+  { name: "Other", value: 5 },
+];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
+// Sample data for funds lost
+const fundsLostData = [
+  { name: "Jan", value: 12000000 },
+  { name: "Feb", value: 8000000 },
+  { name: "Mar", value: 15000000 },
+  { name: "Apr", value: 5000000 },
+  { name: "May", value: 22000000 },
+  { name: "Jun", value: 18000000 },
+  { name: "Jul", value: 9000000 },
+  { name: "Aug", value: 30000000 },
+];
 
-const fundsByMonth = [
-  { name: "Jan", value: 18.5 },
-  { name: "Feb", value: 12.3 },
-  { name: "Mar", value: 25.2 },
-  { name: "Apr", value: 30.5 },
-  { name: "May", value: 22.1 },
-  { name: "Jun", value: 6.8 },
-  { name: "Jul", value: 3.5 },
-  { name: "Aug", value: 15.2 },
-  { name: "Sep", value: 8.9 },
-  { name: "Oct", value: 9.4 },
-  { name: "Nov", value: 2.1 },
-  { name: "Dec", value: 3.8 },
-]
-
+// Sample data for response times
 const responseTimeData = [
-  { name: "Flash Loans", x: 40, y: 2, z: 1200 },
-  { name: "Reentrancy", x: 25, y: 6, z: 800 },
-  { name: "Access Control", x: 15, y: 4, z: 600 },
-  { name: "Oracle Manipulation", x: 12, y: 9, z: 400 },
-  { name: "Other", x: 8, y: 7, z: 300 },
-]
+  { name: "Project A", time: 2.4 },
+  { name: "Project B", time: 1.1 },
+  { name: "Project C", time: 4.8 },
+  { name: "Project D", time: 3.2 },
+  { name: "Project E", time: 2.9 },
+  { name: "Project F", time: 0.8 },
+  { name: "Project G", time: 1.5 },
+];
 
-const projectsAffectedData = [
-  { name: "DEX", value: 32 },
-  { name: "Lending", value: 26 },
-  { name: "Yield Aggregator", value: 18 },
-  { name: "Bridge", value: 14 },
-  { name: "NFT Marketplace", value: 10 },
-]
+// Sample data for affected projects
+const projectsData = [
+  { date: "2023-01", projects: 3, loss: 12000000 },
+  { date: "2023-02", projects: 1, loss: 8000000 },
+  { date: "2023-03", projects: 5, loss: 15000000 },
+  { date: "2023-04", projects: 2, loss: 5000000 },
+  { date: "2023-05", projects: 6, loss: 22000000 },
+  { date: "2023-06", projects: 4, loss: 18000000 },
+  { date: "2023-07", projects: 2, loss: 9000000 },
+  { date: "2023-08", projects: 8, loss: 30000000 },
+];
 
 export function ChartSection() {
-  const [activeTab, setActiveTab] = useState("vulnerability")
+  const [activeTab, setActiveTab] = useState("vulnerabilities")
+  const [containerHeight, setContainerHeight] = useState(400)
+  const [isMobile, setIsMobile] = useState(false)
+  const containerRef = useRef(null)
+
+  // Adjust container height and check mobile based on screen size
+  useEffect(() => {
+    const updateSizes = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 640);
+      setContainerHeight(width < 640 ? 300 : 400);
+    }
+    
+    // Initialize on mount
+    updateSizes();
+    
+    // Update on resize
+    window.addEventListener('resize', updateSizes);
+    return () => window.removeEventListener('resize', updateSizes);
+  }, []);
 
   return (
-    <Card>
+    <Card ref={containerRef}>
       <CardHeader>
         <CardTitle>Security Analytics</CardTitle>
         <CardDescription>
           Data visualizations of security incidents across the Solana ecosystem
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="vulnerability" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="vulnerability">Vulnerabilities</TabsTrigger>
-            <TabsTrigger value="funds">Funds Lost</TabsTrigger>
-            <TabsTrigger value="response">Response Time</TabsTrigger>
-            <TabsTrigger value="projects">Projects Affected</TabsTrigger>
-          </TabsList>
+      <CardContent className="p-0">
+        <div className="h-[500px] sm:h-[550px] md:h-[500px]">
+          <Tabs 
+            defaultValue="vulnerabilities" 
+            className="h-full flex flex-col"
+            value={activeTab}
+            onValueChange={setActiveTab}
+          >
+            <div className="px-6">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+                <TabsTrigger value="vulnerabilities">Vulnerabilities</TabsTrigger>
+                <TabsTrigger value="funds">Funds Lost</TabsTrigger>
+                <TabsTrigger value="response">Response Time</TabsTrigger>
+                <TabsTrigger value="projects">Projects Affected</TabsTrigger>
+              </TabsList>
+            </div>
 
-          <div className="mt-6 h-[350px]">
-            <TabsContent value="vulnerability" className="h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    dataKey="value"
-                    isAnimationActive={true}
-                    data={vulnerabilityData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={120}
-                    fill="#8884d8"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            <TabsContent value="vulnerabilities" className="flex-1 px-2 sm:px-6">
+              <div className="h-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      dataKey="value"
+                      isAnimationActive={true}
+                      data={vulnerabilityData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={containerHeight < 400 ? 80 : 120}
+                      fill="#8884d8"
+                      label={({ name, percent }) => 
+                        isMobile
+                          ? `${(percent * 100).toFixed(0)}%` 
+                          : `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
+                    >
+                      {vulnerabilityData.map((entry, index) => (
+                        <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend 
+                      layout={isMobile ? "horizontal" : "vertical"}
+                      verticalAlign={isMobile ? "bottom" : "middle"}
+                      align={isMobile ? "center" : "right"}
+                      wrapperStyle={isMobile ? { fontSize: '10px' } : { fontSize: '12px', right: 0 }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="funds" className="flex-1 px-2 sm:px-6">
+              <div className="h-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={fundsLostData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis 
+                      tickFormatter={(value) => `$${value / 1000000}M`}
+                    />
+                    <Tooltip 
+                      formatter={(value) => [`$${value.toLocaleString()}`, "Funds Lost"]}
+                    />
+                    <Legend />
+                    <Bar dataKey="value" name="Funds Lost (USD)" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="response" className="flex-1 px-2 sm:px-6">
+              <div className="h-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={responseTimeData}
+                    layout="vertical"
+                    margin={{ top: 5, right: 30, left: isMobile ? 20 : 40, bottom: 5 }}
                   >
-                    {vulnerabilityData.map((entry) => (
-                      <Cell key={`cell-${entry.name}`} fill={COLORS[vulnerabilityData.findIndex(item => item.name === entry.name) % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value) => [`${value}%`, "Percentage"]}
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      type="number" 
+                      label={{ value: 'Hours', position: 'insideBottom', offset: -5 }}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name" 
+                      width={isMobile ? 50 : 80}
+                    />
+                    <Tooltip formatter={(value) => [`${value} hours`, "Response Time"]} />
+                    <Legend />
+                    <Bar dataKey="time" name="Response Time (Hours)" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </TabsContent>
 
-            <TabsContent value="funds" className="h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={fundsByMonth}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis label={{ value: 'Millions USD', angle: -90, position: 'insideLeft' }} />
-                  <Tooltip formatter={(value) => [`$${value}M`, "Funds Lost"]} />
-                  <Legend />
-                  <Bar dataKey="value" name="Funds Lost (Millions USD)" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </TabsContent>
-
-            <TabsContent value="response" className="h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart
-                  margin={{
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20,
-                  }}
-                >
-                  <CartesianGrid />
-                  <XAxis
-                    type="number"
-                    dataKey="x"
-                    name="Percentage"
-                    unit="%"
-                    label={{ value: 'Frequency (%)', position: 'bottom' }}
-                  />
-                  <YAxis
-                    type="number"
-                    dataKey="y"
-                    name="Response Time"
-                    unit="hrs"
-                    label={{ value: 'Response Time (hrs)', angle: -90, position: 'insideLeft' }}
-                  />
-                  <ZAxis
-                    type="number"
-                    dataKey="z"
-                    range={[60, 400]}
-                    name="Funds Lost"
-                    unit="K"
-                  />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                  <Legend />
-                  <Scatter name="Vulnerability Types" data={responseTimeData} fill="#FF8042" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </TabsContent>
-
-            <TabsContent value="projects" className="h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    dataKey="value"
-                    isAnimationActive={true}
-                    data={projectsAffectedData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={120}
-                    fill="#8884d8"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            <TabsContent value="projects" className="flex-1 px-2 sm:px-6">
+              <div className="h-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart
+                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                   >
-                    {projectsAffectedData.map((entry) => (
-                      <Cell key={`cell-${entry.name}`} fill={COLORS[projectsAffectedData.findIndex(item => item.name === entry.name) % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => [`${value} Projects`, "Count"]} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+                    <CartesianGrid />
+                    <XAxis 
+                      dataKey="date" 
+                      name="Date" 
+                      tick={{ fontSize: isMobile ? 10 : 12 }}
+                    />
+                    <YAxis 
+                      dataKey="projects" 
+                      name="Projects Affected" 
+                      tick={{ fontSize: isMobile ? 10 : 12 }}
+                    />
+                    <ZAxis 
+                      dataKey="loss" 
+                      range={[50, 400]} 
+                      name="Loss" 
+                    />
+                    <Tooltip 
+                      cursor={{ strokeDasharray: '3 3' }}
+                      formatter={(value, name) => {
+                        if (name === "Loss") {
+                          return [`$${Number(value).toLocaleString()}`, "Funds Lost"];
+                        }
+                        return [value, name];
+                      }}
+                    />
+                    <Legend />
+                    <Scatter name="Projects Affected vs Loss" data={projectsData} fill="#FF8042" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
             </TabsContent>
-          </div>
-        </Tabs>
+          </Tabs>
+        </div>
       </CardContent>
     </Card>
   )
 }
+

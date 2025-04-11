@@ -62,7 +62,7 @@ const FundsLostChart = () => {
     
     const now = new Date();
     const months = timeRange === '3m' ? 3 : timeRange === '6m' ? 6 : 12;
-    const cutoffDate = new Date(now.setMonth(now.getMonth() - months));
+    const cutoffDate = new Date(new Date().setMonth(now.getMonth() - months));
     
     return exploits.filter(exploit => new Date(exploit.date) >= cutoffDate);
   };

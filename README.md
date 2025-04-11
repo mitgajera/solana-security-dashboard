@@ -1,55 +1,36 @@
-# Superteam Security Dashboard
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Welcome to the Superteam Security Dashboard! This open-source project aims to provide real-time visualization of major exploits in the Solana ecosystem, helping developers and users stay informed and secure.
+## Getting Started
 
-## 🎯 Project Goals
-- Visualize all major Solana ecosystem exploits since the original Superteam Security handbook was published.
-- Provide on-chain analytics including frequency, type, funds lost, and response time.
-- Track live hacks and share resources and best practices.
-- Foster a collaborative environment through GitHub contributions.
+First, run the development server:
 
-## 📂 Key Features
-- **Exploit Overview Table**: A chronological table of major hacks with protocol, date, type, and financial impact.
-- **On-chain Analytics**: Charts showing exploit frequency, loss trends, types of vulnerabilities, and time-to-response.
-- **Live Hack Tracker**: Real-time alerts for new hacks using APIs or webhook services.
-- **Best Practices Library**: Curated resources for developers and users.
-- **Contribution Panel**: Contributor leaderboard, recent PRs, and a “How to Contribute” guide.
-- **Report a Hack**: Community form or GitHub issue template to submit new exploits.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## 🛠️ Tech Stack
-- **Frontend**: React, Tailwind CSS, Recharts/D3.js, Lucide Icons
-- **Backend/Data**: Dune Analytics, Flipside Crypto, Solana APIs, Helius, SolanaFM
-- **Hosting/Open Source**: GitHub, Vercel/Netlify, Markdown/MDX
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 📅 Getting Started
-1. **Clone the Repository**:
-   ```
-   git clone https://github.com/yourusername/superteam-security-dashboard.git
-   cd superteam-security-dashboard
-   ```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-2. **Install Dependencies**:
-   ```
-   npm install
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-3. **Set Up Environment Variables**:
-   Copy the `.env.example` to `.env` and fill in the required variables.
+## Learn More
 
-4. **Run the Development Server**:
-   ```
-   npm start
-   ```
+To learn more about Next.js, take a look at the following resources:
 
-5. **Open your browser** and navigate to `http://localhost:3000` to view the dashboard.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 🤝 Contributing
-We welcome contributions! Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to contribute to the project.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## 📄 License
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+## Deploy on Vercel
 
-## 📞 Contact
-For any inquiries or suggestions, please reach out via GitHub issues or contact the maintainers directly.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Thank you for your interest in the Superteam Security Dashboard! Let's work together to enhance security in the Solana ecosystem.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

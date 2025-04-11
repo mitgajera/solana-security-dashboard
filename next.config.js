@@ -4,12 +4,6 @@ const nextConfig = {
   distDir: 'out',
   images: {
     unoptimized: true,
-    domains: [
-      "source.unsplash.com",
-      "images.unsplash.com",
-      "ext.same-assets.com",
-      "ugc.same-assets.com",
-    ],
     remotePatterns: [
       {
         protocol: "https",
@@ -39,14 +33,11 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  reactStrictMode: true,
-  swcMinify: true,
-  transpilePackages: [],
-  env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.REACT_APP_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.REACT_APP_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_HELIUS_API_KEY: process.env.REACT_APP_HELIUS_API_KEY
+  // Fix the experimental config
+  experimental: {
+    // Only keep valid experimental options
+    esmExternals: true
   }
-};
+}
 
 export default nextConfig;

@@ -1,19 +1,24 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PendingExploitsTable } from "@/components/admin/pending-exploits-table"
-import { ManageUsersPanel } from "@/components/admin/manage-users-panel"
-import { AuditLogPanel } from "@/components/admin/audit-log-panel"
-import { AdminSettingsPanel } from "@/components/admin/admin-settings-panel"
-import { Badge } from "@/components/ui/badge"
-import { supabase } from "@/lib/supabase"
+import { useState, useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PendingExploitsTable } from "@/components/admin/pending-exploits-table";
+import { ManageUsersPanel } from "@/components/admin/manage-users-panel";
+import { AuditLogPanel } from "@/components/admin/audit-log-panel";
+import { AdminSettingsPanel } from "@/components/admin/admin-settings-panel";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export function AdminPanel() {
+  const [mounted, setMounted] = useState(false);
   const [dataSource, setDataSource] = useState<"live" | "mock">("mock");
   const [connectionStatus, setConnectionStatus] = useState<"connected" | "disconnected">("disconnected");
   
+  // Only run on client side
   useEffect(() => {
+    setMounted(true);
+    
     // Check if we have a valid Supabase connection
     const checkConnection = async () => {
       try {
@@ -21,6 +26,8 @@ export function AdminPanel() {
         if (!error) {
           setDataSource("live");
           setConnectionStatus("connected");
+        } else {
+          throw new Error("Failed to connect to database");
         }
       } catch (error) {
         console.warn("Unable to connect to Supabase, using mock data", error);
@@ -31,6 +38,11 @@ export function AdminPanel() {
     
     checkConnection();
   }, []);
+  
+  // Don't render anything until mounted on client
+  if (!mounted) {
+    return <div className="p-8">Loading admin panel...</div>;
+  }
 
   return (
     <>
@@ -70,10 +82,27 @@ export function AdminPanel() {
           <AdminSettingsPanel 
             dataSource={dataSource} 
             connectionStatus={connectionStatus}
-            onTestConnection={checkConnection}
+            onTestConnection={() => {
+              const checkConnection = async () => {
+                try {
+                  const { data, error } = await supabase.from('connection_test').select('*').limit(1);
+                  if (!error) {
+                    setDataSource("live");
+                    setConnectionStatus("connected");
+                  } else {
+                    throw new Error("Failed to connect to database");
+                  }
+                } catch (error) {
+                  console.warn("Unable to connect to Supabase, using mock data", error);
+                  setDataSource("mock");
+                  setConnectionStatus("disconnected");
+                } 
+              };
+              return checkConnection();
+            }}
           />
         </TabsContent>
       </Tabs>
     </>
-  )
+  );
 }

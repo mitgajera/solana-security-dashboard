@@ -1,13 +1,11 @@
-// src/types/index.ts
+
 export interface Exploit {
-  id: string | number;
+  id: number | string;
   protocol: string;
   date: string;
   type: string;
   fundsLost: number;
   responseTime: number;
-  description?: string;
-  transactionHash?: string;
 }
 
 export interface LiveAlert {
@@ -17,7 +15,6 @@ export interface LiveAlert {
   type: string;
   severity: 'Low' | 'Medium' | 'High' | 'Critical';
   transactionHash: string;
-  details?: Record<string, any>;
 }
 
 export interface HackReport {
@@ -29,4 +26,18 @@ export interface HackReport {
   sourceLinks: string[];
   reporterName?: string;
   reporterEmail?: string;
+}
+
+export interface ProgramAccount {
+  name: string;
+  programId: string;
+  risk: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface SuspiciousTransaction {
+  signature: string;
+  blockTime: number;
+  protocol: string;
+  type: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
 }

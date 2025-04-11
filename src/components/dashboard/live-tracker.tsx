@@ -9,113 +9,140 @@ import {
   CardTitle
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { AlertTriangleIcon, ShieldAlertIcon, ActivityIcon } from "lucide-react"
-
-// Mock data - would be replaced with real-time API
-const initialAlerts = [
-  {
-    id: "a1",
-    message: "Potential flash loan attack detected on SolanaSwap",
-    timestamp: "10 minutes ago",
-    severity: "high",
-  },
-  {
-    id: "a2",
-    message: "Unusual transaction volume on MoonDeFi protocol",
-    timestamp: "25 minutes ago",
-    severity: "medium",
-  },
-  {
-    id: "a3",
-    message: "Price oracle deviation detected on SolPrice",
-    timestamp: "40 minutes ago",
-    severity: "medium",
-  },
-  {
-    id: "a4",
-    message: "Multiple failed authentication attempts on SolBridge",
-    timestamp: "1 hour ago",
-    severity: "low",
-  },
-  {
-    id: "a5",
-    message: "Smart contract upgrade scheduled for SolLending",
-    timestamp: "2 hours ago",
-    severity: "info",
-  },
-]
+import { Button } from "@/components/ui/button"
+import { AlertTriangleIcon, ShieldAlertIcon, ActivityIcon, RefreshCwIcon } from "lucide-react"
+import { useLiveAlerts } from "@/hooks/useLiveAlerts"
+import { LiveAlert } from "@/types"
+import { formatDistanceToNow } from "date-fns"
 
 export function LiveTracker() {
-  const [alerts, setAlerts] = useState(initialAlerts)
+  const { alerts, loading, error } = useLiveAlerts();
+  const [connectionError, setConnectionError] = useState(false);
 
-  // Simulate receiving new alerts periodically
+  // Function to handle refresh with error handling
+  const handleRefresh = async () => {
+    try {
+      // Your refresh implementation
+      setConnectionError(false);
+    } catch (err) {
+      console.log("Unable to refresh data - network issue");
+      setConnectionError(true);
+    }
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      // 20% chance to add a new alert
-      if (Math.random() < 0.2) {
-        const newAlert = {
-          id: `a${Math.floor(Math.random() * 1000)}`,
-          message: `New activity detected on ${Math.random() > 0.5 ? 'SolWallet' : 'LunaSwap'} protocol`,
-          timestamp: "Just now",
-          severity: ["low", "medium", "high"][Math.floor(Math.random() * 3)],
-        }
-        setAlerts(prev => [newAlert, ...prev.slice(0, 4)])
-      }
-    }, 10000)
+    // Set connection error state based on error from useLiveAlerts
+    if (error && error.toString().includes('WebSocket')) {
+      setConnectionError(true);
+    }
+  }, [error]);
 
-    return () => clearInterval(interval)
-  }, [])
+  // Format timestamp to relative time (e.g. "5 minutes ago")
+  const formatRelativeTime = (timestamp: string): string => {
+    try {
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+    } catch (err) {
+      return 'Recently';
+    }
+  };
 
   return (
-    <Card className="col-span-1">
-      <CardHeader>
-        <div className="flex items-center space-x-2">
-          <ActivityIcon className="h-5 w-5 text-primary animate-pulse" />
-          <CardTitle>Live Security Alerts</CardTitle>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex items-center">
+          <ShieldAlertIcon className="mr-2 h-5 w-5 text-primary" />
+          <div>
+            <CardTitle className="text-sm font-medium">Live Security Alerts</CardTitle>
+            {connectionError && (
+              <Badge variant="outline" className="text-amber-500 border-amber-500 mt-1">
+                <AlertTriangleIcon className="h-3 w-3 mr-1" />
+                Using cached data
+              </Badge>
+            )}
+          </div>
         </div>
-        <CardDescription>
-          Real-time security alerts and notifications
-        </CardDescription>
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleRefresh} 
+            disabled={loading}
+          >
+            <RefreshCwIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </CardHeader>
+      <CardDescription className="px-6">
+        Real-time security alerts from the Solana blockchain
+      </CardDescription>
       <CardContent>
-        <div className="space-y-4 overflow-auto max-h-[300px]">
-          {alerts.map((alert) => (
-            <div key={alert.id} className="flex space-x-3 items-start border-l-2 pl-3 py-1 animate-in fade-in slide-in-from-right-5 duration-500"
-              style={{
-                borderColor:
-                  alert.severity === "high" ? "rgb(239, 68, 68)" :
-                  alert.severity === "medium" ? "rgb(245, 158, 11)" :
-                  alert.severity === "low" ? "rgb(59, 130, 246)" :
-                  "rgb(156, 163, 175)"
-              }}
-            >
-              {alert.severity === "high" ? (
-                <ShieldAlertIcon className="h-5 w-5 text-red-500 mt-0.5" />
-              ) : alert.severity === "medium" ? (
-                <AlertTriangleIcon className="h-5 w-5 text-amber-500 mt-0.5" />
-              ) : (
-                <ActivityIcon className="h-5 w-5 text-blue-500 mt-0.5" />
-              )}
-              <div className="flex-1">
-                <div className="flex justify-between items-start gap-2">
-                  <p className="text-sm font-medium">{alert.message}</p>
-                  <Badge variant={
-                    alert.severity === "high" ? "destructive" :
-                    alert.severity === "medium" ? "default" :
-                    alert.severity === "low" ? "outline" :
-                    "secondary"
-                  }>
-                    {alert.severity}
-                  </Badge>
+        {loading && alerts.length === 0 ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-destructive py-10">
+            Unable to load security alerts. Please try again later.
+          </div>
+        ) : alerts.length === 0 ? (
+          <div className="text-center text-muted-foreground py-10">
+            No active security alerts at this time.
+          </div>
+        ) : (
+          <div className="space-y-4 overflow-auto max-h-[400px] pr-2">
+            {alerts.map((alert, index) => (
+              <div 
+                key={`${alert.id}-${index}`} 
+                className="flex space-x-3 items-start border-l-2 pl-3 py-2 animate-in fade-in slide-in-from-right-5 duration-300"
+                style={{
+                  borderColor:
+                    alert.severity === "Critical" ? "rgb(239, 68, 68)" :
+                    alert.severity === "High" ? "rgb(245, 158, 11)" :
+                    alert.severity === "Medium" ? "rgb(234, 179, 8)" :
+                    "rgb(59, 130, 246)"
+                }}
+              >
+                {alert.severity === "Critical" || alert.severity === "High" ? (
+                  <ShieldAlertIcon className="h-5 w-5 text-red-500 mt-0.5" />
+                ) : alert.severity === "Medium" ? (
+                  <AlertTriangleIcon className="h-5 w-5 text-amber-500 mt-0.5" />
+                ) : (
+                  <ActivityIcon className="h-5 w-5 text-blue-500 mt-0.5" />
+                )}
+                <div className="flex-1">
+                  <div className="flex justify-between items-start gap-2">
+                    <div>
+                      <div className="font-medium">{alert.protocol}</div>
+                      <p className="text-sm text-muted-foreground mt-1">{alert.type}</p>
+                    </div>
+                    <Badge variant={
+                      alert.severity === "Critical" ? "destructive" :
+                      alert.severity === "High" ? "destructive" :
+                      alert.severity === "Medium" ? "default" :
+                      "outline"
+                    }>
+                      {alert.severity}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <a 
+                      href={`https://solscan.io/tx/${alert.transactionHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary hover:underline"
+                    >
+                      View Transaction
+                    </a>
+                    <p className="text-xs text-muted-foreground">
+                      {formatRelativeTime(alert.timestamp)}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {alert.timestamp}
-                </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }

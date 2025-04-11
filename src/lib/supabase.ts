@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_UR;
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseKey && process.env.NODE_ENV === 'production') {
   console.error('No Supabase key found in environment variables');
@@ -9,7 +9,7 @@ if (!supabaseKey && process.env.NODE_ENV === 'production') {
 
 export const supabase = createClient(
   supabaseUrl, 
-  supabaseKey 
+  supabaseKey || ''
 );
 
 // Keep the mockExploits as fallback data during development
@@ -58,6 +58,64 @@ export const mockExploits = [
     funds_lost: 8900000,
     response_time: 12,
     description: 'Flash loan attack targeting liquidity pools'
+  }
+];
+
+export const mockPendingExploits = [
+  {
+    id: "p1",
+    project: "SolWallet Protocol",
+    type: "Flash Loan Attack",
+    submittedBy: "security@blockchain-watch.com",
+    submittedDate: "2024-04-05T14:23:00Z",
+    estimatedLoss: "$12.5M",
+    status: "pending",
+    priority: "high",
+    description: "An attacker used multiple flash loans to manipulate liquidity pools and drain user funds. The attack was conducted across multiple transactions and exploited a vulnerability in the price calculation mechanism."
+  },
+  {
+    id: "p2",
+    project: "SolarFinance",
+    type: "Reentrancy",
+    submittedBy: "alice@securityfirm.io",
+    submittedDate: "2024-03-28T09:15:00Z",
+    estimatedLoss: "$8.3M",
+    status: "pending",
+    priority: "high",
+    description: "Multiple funds were drained due to a classic reentrancy vulnerability in the deposit function. The attacker was able to withdraw funds multiple times before balance updates were applied."
+  },
+  {
+    id: "p3",
+    project: "SolStake",
+    type: "Access Control",
+    submittedBy: "anonymous-reporter",
+    submittedDate: "2024-03-15T18:45:00Z",
+    estimatedLoss: "$4.6M",
+    status: "pending",
+    priority: "medium",
+    description: "An improperly secured admin function allowed the attacker to withdraw user funds. The contract lacked proper access controls on critical functions."
+  },
+  {
+    id: "p4",
+    project: "TokenBridge",
+    type: "Oracle Manipulation",
+    submittedBy: "security-team@protocol.com",
+    submittedDate: "2024-03-10T11:30:00Z",
+    estimatedLoss: "$3.2M",
+    status: "under review",
+    priority: "medium",
+    description: "The price oracle was manipulated to execute trades at favorable prices, resulting in protocol losses. The attacker exploited a time delay in price updates."
+  },
+  {
+    id: "p5",
+    project: "NFTMarket",
+    type: "Smart Contract Vulnerability",
+    submittedBy: "whitehat@securityresearch.org",
+    submittedDate: "2024-02-28T16:20:00Z",
+    estimatedLoss: "$1.8M",
+    status: "pending",
+    priority: "low",
+    description: "An integer overflow vulnerability allowed an attacker to buy NFTs at significantly reduced prices, causing losses to sellers."
   }
 ];
 

@@ -3,8 +3,8 @@ import { Exploit, LiveAlert, HackReport } from '../types';
 import { supabase } from '../lib/supabase';
 
 // Use environment variables properly
-const HELIUS_API_KEY = process.env.REACT_APP_HELIUS_API_KEY || '';
-const DUNE_API_KEY = process.env.REACT_APP_DUNE_API_KEY || '';
+const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '';
+const DUNE_API_KEY = process.env.DUNE_API_KEY || '';
 
 export const apiService = {
   async fetchExploitData(): Promise<Exploit[]> {

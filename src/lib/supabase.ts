@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Exploit, LiveAlert } from '../types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -13,14 +14,14 @@ export const supabase = createClient(
 );
 
 // Keep the mockExploits as fallback data during development
-export const mockExploits = [
+export const mockExploits: Exploit[] = [
   {
     id: 1,
     protocol: 'Mango Markets',
     date: '2022-10-11',
     type: 'Oracle Manipulation',
-    funds_lost: 114000000,
-    response_time: 24,
+    fundsLost: 114000000,
+    responseTime: 24,
     description: 'Price oracle manipulation that led to significant drain of funds'
   },
   {
@@ -28,8 +29,8 @@ export const mockExploits = [
     protocol: 'Solend',
     date: '2022-11-02',
     type: 'Smart Contract',
-    funds_lost: 1260000,
-    response_time: 4,
+    fundsLost: 1260000,
+    responseTime: 4,
     description: 'Contract vulnerability exploited leading to loss of user funds'
   },
   {
@@ -37,8 +38,8 @@ export const mockExploits = [
     protocol: 'Solana Wormhole',
     date: '2022-02-02',
     type: 'Smart Contract',
-    funds_lost: 320000000,
-    response_time: 16,
+    fundsLost: 320000000,
+    responseTime: 16,
     description: 'A vulnerability in the token bridge allowed attacker to mint tokens'
   },
   {
@@ -46,8 +47,8 @@ export const mockExploits = [
     protocol: 'Marinade Finance',
     date: '2023-03-15',
     type: 'Access Control',
-    funds_lost: 4500000,
-    response_time: 8,
+    fundsLost: 4500000,
+    responseTime: 8,
     description: 'Improper access controls led to unauthorized withdrawals'
   },
   {
@@ -55,13 +56,25 @@ export const mockExploits = [
     protocol: 'Jupiter',
     date: '2023-05-22',
     type: 'Flash Loan',
-    funds_lost: 8900000,
-    response_time: 12,
+    fundsLost: 8900000,
+    responseTime: 12,
     description: 'Flash loan attack targeting liquidity pools'
   }
 ];
 
-export const mockPendingExploits = [
+export interface PendingExploit {
+  id: string;
+  project: string;
+  type: string;
+  submittedBy: string;
+  submittedDate: string;
+  estimatedLoss: string;
+  status: string;
+  priority: 'low' | 'medium' | 'high';
+  description: string;
+}
+
+export const mockPendingExploits: PendingExploit[] = [
   {
     id: "p1",
     project: "SolWallet Protocol",
@@ -120,7 +133,7 @@ export const mockPendingExploits = [
 ];
 
 // Helper function to safely fetch data with fallback
-export async function fetchWithFallback(table: string, fallbackData: any[]) {
+export async function fetchWithFallback<T>(table: string, fallbackData: T[]): Promise<T[]> {
   try {
     const { data, error } = await supabase
       .from(table)
@@ -128,7 +141,7 @@ export async function fetchWithFallback(table: string, fallbackData: any[]) {
       .order('created_at', { ascending: false });
       
     if (error) throw error;
-    return data && data.length > 0 ? data : fallbackData;
+    return data && data.length > 0 ? (data as T[]) : fallbackData;
   } catch (error) {
     console.warn(`Using fallback data for ${table}:`, error);
     return fallbackData;

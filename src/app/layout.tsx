@@ -1,35 +1,36 @@
-import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
+import { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import { cn } from "@/lib/utils";
-
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import { Navbar } from "@/components/layout/navbar";
+import ClientBody from "./ClientBody";
 
 export const metadata: Metadata = {
   title: "Superteam Security Dashboard",
-  description: "Real-time visualization of major exploits in the Solana ecosystem",
+  description: "Security monitoring for the Solana ecosystem",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)} suppressHydrationWarning>
+      <ClientBody>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
+          disableTransitionOnChange
         >
-          {children}
+          <div className="relative flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
         </ThemeProvider>
-      </body>
+      </ClientBody>
     </html>
   );
 }

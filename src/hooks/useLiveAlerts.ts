@@ -3,6 +3,18 @@ import { supabase } from '../lib/supabase';
 import { LiveAlert } from '../types';
 import { solanaService } from '../services/solanaService';
 
+// Define the Supabase database row type
+interface LiveAlertRow {
+  id: string;
+  timestamp: string;
+  protocol: string;
+  type: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  transaction_hash: string;
+  details?: string;
+  created_at: string;
+}
+
 export function useLiveAlerts() {
   const [alerts, setAlerts] = useState<LiveAlert[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +40,7 @@ export function useLiveAlerts() {
           
           if (data && data.length > 0) {
             // Transform the data to match our LiveAlert interface
-            const formattedData = data.map((item: any) => ({
+            const formattedData = data.map((item: LiveAlertRow) => ({
               id: item.id,
               timestamp: item.timestamp,
               protocol: item.protocol,
@@ -95,7 +107,7 @@ export function useLiveAlerts() {
         protocol: 'MockProtocol',
         type: 'MockType',
         severity: 'Low',
-        transactionHash: 'mockHash1'
+        transactionHash: 'mockHash1' + Date.now()
       },
       {
         id: 'mock2',
@@ -103,7 +115,7 @@ export function useLiveAlerts() {
         protocol: 'MockProtocol',
         type: 'MockType',
         severity: 'Medium',
-        transactionHash: 'mockHash2'
+        transactionHash: 'mockHash2' + Date.now()
       }
     ];
   }

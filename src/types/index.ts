@@ -1,11 +1,10 @@
-
 export interface Exploit {
-  id: number | string;
+  id: string;
   protocol: string;
   date: string;
   type: string;
   fundsLost: number;
-  responseTime: number;
+  responseTime?: number;
 }
 
 export interface LiveAlert {
@@ -13,7 +12,7 @@ export interface LiveAlert {
   timestamp: string;
   protocol: string;
   type: string;
-  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  severity: string;
   transactionHash: string;
 }
 

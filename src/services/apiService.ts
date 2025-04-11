@@ -2,6 +2,29 @@ import axios from 'axios';
 import { Exploit, LiveAlert, HackReport } from '../types';
 import { supabase } from '../lib/supabase';
 
+// Define Supabase data types
+interface ExploitRow {
+  id: number;
+  protocol: string;
+  date: string;
+  type: string;
+  funds_lost: number;
+  response_time: number;
+  description?: string;
+  created_at: string;
+}
+
+interface LiveAlertRow {
+  id: string;
+  timestamp: string;
+  protocol: string;
+  type: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  transaction_hash: string;
+  details?: string;
+  created_at: string;
+}
+
 // Use environment variables properly
 const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '';
 const DUNE_API_KEY = process.env.DUNE_API_KEY || '';
@@ -18,7 +41,7 @@ export const apiService = {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        return data.map((item: any) => ({
+        return data.map((item: ExploitRow) => ({
           id: item.id,
           protocol: item.protocol,
           date: item.date,
@@ -47,12 +70,12 @@ export const apiService = {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        return data.map((item: any) => ({
+        return data.map((item: LiveAlertRow) => ({
           id: item.id,
           timestamp: item.timestamp,
           protocol: item.protocol,
           type: item.type,
-          severity: item.severity as 'Low' | 'Medium' | 'High' | 'Critical',
+          severity: item.severity,
           transactionHash: item.transaction_hash
         }));
       }
@@ -64,43 +87,32 @@ export const apiService = {
     }
   },
   
-  // Add the missing submitHackReport method
   async submitHackReport(hackData: HackReport): Promise<{ success: boolean; message: string }> {
     try {
-      // Insert the report into Supabase
-      const { data, error } = await supabase
-        .from('hack_reports')
-        .insert({
-          protocol: hackData.protocol,
-          date: hackData.date,
-          type: hackData.type,
-          funds_lost: hackData.fundsLost,
-          description: hackData.description,
-          source_links: hackData.sourceLinks,
-          reporter_name: hackData.reporterName || null,
-          reporter_email: hackData.reporterEmail || null,
-          status: 'pending',
-          created_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('hack_reports').insert({
+        protocol: hackData.protocol,
+        date: hackData.date,
+        type: hackData.type,
+        funds_lost: hackData.fundsLost,
+        description: hackData.description,
+        source_links: hackData.sourceLinks,
+        reporter_name: hackData.reporterName || 'Anonymous',
+        reporter_email: hackData.reporterEmail,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      });
       
-      if (error) {
-        console.error('Error submitting hack report:', error);
-        return {
-          success: false,
-          message: 'Failed to submit report. Please try again or contact support.'
-        };
-      }
+      if (error) throw error;
       
-      // If in development and no Supabase connection, simulate success
       return { 
         success: true, 
-        message: 'Hack report submitted successfully and is under review' 
+        message: 'Hack report submitted successfully. Thank you for contributing to Solana security.'
       };
     } catch (error) {
       console.error('Error submitting hack report:', error);
-      return {
-        success: false,
-        message: 'Failed to submit report. Please try again or contact support.'
+      return { 
+        success: false, 
+        message: 'Failed to submit report. Please try again later.'
       };
     }
   }

@@ -2,9 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useExploitData } from '../../hooks/useExploitData';
 
+interface ChartDataPoint {
+  name: string;
+  value: number;
+  date: string;
+  type: string;
+  color: string;
+}
+
+interface TooltipPayloadItem {
+  payload: ChartDataPoint;
+  value: number;
+  dataKey: string;
+  color?: string;
+}
+
 interface TooltipData {
   active?: boolean;
-  payload?: Array<any>;
+  payload?: Array<TooltipPayloadItem>;
   label?: string;
 }
 

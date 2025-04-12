@@ -1,47 +1,70 @@
-# Contributing to the Superteam Security Dashboard
+# Contributing to the Solana Security Dashboard
 
-Thank you for your interest in contributing to the Superteam Security Dashboard! We welcome contributions from everyone and appreciate your help in making this project better. Please follow the guidelines below to ensure a smooth contribution process.
+Thank you for considering contributing to the Solana Security Dashboard! This guide will help you get started with the contribution process.
 
-## How to Contribute
+## Development Setup
 
-1. **Fork the Repository**: Start by forking the repository to your own GitHub account.
-
-2. **Clone Your Fork**: Clone your forked repository to your local machine.
-   ```
-   git clone https://github.com/your-username/superteam-security-dashboard.git
-   ```
-
-3. **Create a Branch**: Create a new branch for your feature or bug fix.
-   ```
-   git checkout -b feature/your-feature-name
+1. **Fork & Clone**:
+   ```bash
+   git clone https://github.com/mitgajera/solana-security-dashboard.git
+   cd solana-security-dashboard
    ```
 
-4. **Make Changes**: Implement your changes in the codebase. Ensure that your code adheres to the project's coding standards.
-
-5. **Test Your Changes**: Run the application locally to test your changes. Make sure everything works as expected.
-
-6. **Commit Your Changes**: Commit your changes with a clear and descriptive message.
-   ```
-   git commit -m "Add a brief description of your changes"
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   # or
+   yarn install
    ```
 
-7. **Push to Your Fork**: Push your changes to your forked repository.
+3. **Run Development Server**:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
    ```
-   git push origin feature/your-feature-name
+
+## Contribution Workflow
+
+1. **Create a Branch**:
+   ```bash
+   git checkout -b feature/descriptive-name
    ```
 
-8. **Create a Pull Request**: Go to the original repository and create a pull request. Provide a detailed description of your changes and why they should be merged.
+2. **Make & Test Changes**: Ensure your code works as expected and includes tests.
 
-## Guidelines
+3. **Commit Changes**: Follow [conventional commits](https://www.conventionalcommits.org/) format.
+   ```bash
+   git commit -m "feat: add new security metric visualization"
+   ```
 
-- **Code Quality**: Ensure your code is clean, well-documented, and follows the existing code style.
-- **Testing**: If you are adding new features, please include tests to cover your changes.
-- **Issues**: Before creating a new issue, check if it has already been reported. If you find a bug, please provide as much detail as possible.
-- **Respect the Community**: Be respectful and constructive in your interactions with other contributors.
+4. **Push & Open PR**:
+   ```bash
+   git push origin feature/descriptive-name
+   ```
+   Then open a pull request with a clear description of changes.
 
-## Resources
+## Best Practices
 
-- [Project Documentation](./README.md)
-- [Code of Conduct](./CODE_OF_CONDUCT.md) (if applicable)
+- **Code Style**: Follow the project's ESLint and Prettier configurations
+- **Testing**: Write unit tests for new features and fix broken tests
+- **Documentation**: Update relevant documentation for your changes
+- **Atomic PRs**: Keep pull requests focused on a single concern
+- **Issues First**: For major changes, open an issue for discussion before coding
 
-Thank you for contributing to the Superteam Security Dashboard! Your efforts help make the Solana ecosystem safer for everyone.
+## Issue Management
+
+- Search for existing issues before creating new ones
+- Use issue templates when available
+- Be specific about the problem or feature request
+- Include screenshots, error messages, or steps to reproduce issues
+
+## Pull Request Process
+
+1. Update documentation as needed
+2. Add necessary tests
+3. Ensure all CI checks pass
+4. Request reviews from maintainers
+5. Address review feedback promptly
+
+We value all contributions and will work with you to get your changes merged. Thank you for helping make the Solana ecosystem safer!

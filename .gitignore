@@ -2,21 +2,34 @@
 /node_modules
 /.pnp
 .pnp.js
+package-lock.json
+yarn.lock
+bun.lockb
 
 # testing
 /coverage
+/.nyc_output
+/cypress/videos/
+/cypress/screenshots/
 
 # next.js
 /.next/
 /out/
+.next/
+next.config.original.js
+.swc/
 
 # production
 /build
 /dist
+/storybook-static
 
 # misc
 .DS_Store
 *.pem
+.npmrc
+.yalc
+yalc.lock
 
 # debug
 npm-debug.log*
@@ -25,10 +38,15 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
 .env
+.env.local
+.env*.local
 .env.development
+.env.test
 .env.production
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -36,12 +54,32 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+tsconfig.tsbuildinfo
 
 # IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo
+.vs/
+*.sublime-workspace
+*.sublime-project
+.history/
 
 # OS specific
 Thumbs.db
+desktop.ini
+.directory
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Cache and temporary files
+.cache/
+.temp/
+.tmp/
+.eslintcache
+.stylelintcache
+.pretti
+

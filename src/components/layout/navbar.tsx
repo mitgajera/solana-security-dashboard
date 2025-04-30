@@ -2,29 +2,29 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Code2Icon, Menu, X } from "lucide-react"
+import { Code2Icon, Menu, X, ShieldIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 export function Navbar() {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6 md:gap-10">
+    <header className="border-b border-border sticky top-0 bg-background z-50">
+      <div className="container flex items-center justify-between py-3 sm:py-4">
+        <div className="flex items-center gap-6 sm:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <Code2Icon className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">
-              Superteam Security
-            </span>
+            <span className="font-bold">SolSec</span>
           </Link>
           
           {/* Desktop Navigation */}
-          <nav className="hidden gap-6 md:flex">
+          <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
               className={`text-sm font-medium transition-colors hover:text-primary ${
@@ -64,6 +64,14 @@ export function Navbar() {
               }`}
             >
               Resources
+            </Link>
+            <Link
+              href="/admin"
+              className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                pathname === '/admin' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
+            >
+              Admin
             </Link>
           </nav>
         </div>
@@ -117,7 +125,7 @@ export function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Submit Hack
+              Submit
             </Link>
             <Link
               href="/resources"
@@ -127,6 +135,15 @@ export function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Resources
+            </Link>
+            <Link
+              href="/admin"
+              className={`py-3 text-sm font-medium transition-colors hover:text-primary flex items-center gap-2 ${
+                pathname === '/admin' ? 'text-primary font-bold' : 'text-muted-foreground'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Admin
             </Link>
           </nav>
         </div>

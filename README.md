@@ -21,7 +21,7 @@ A real-time visualization platform for tracking and analyzing security incidents
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/mitgajera/solana-security-dashboard.git
+    git clone https://github.com/yourusername/solana-security-dashboard.git
     cd solana-security-dashboard
     ```
 
